@@ -1,7 +1,7 @@
+import { ResponseEntity } from "@/utils/api";
 import { getUniqueFileName } from "@/utils/file";
 import fs from "fs";
 import { writeFile } from "fs/promises";
-import { NextResponse } from "next/server";
 import path from "path";
 
 export async function POST(req: Request) {
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
   const file: any = formData.get("itemCoverImg");
   if (!file) {
-    return NextResponse.json({ error: "No files received." }, { status: 400 });
+    return ResponseEntity.badRequestResponseEntity({message : "No files received."})
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -64,9 +64,11 @@ export async function POST(req: Request) {
       });
     });
 
-    return NextResponse.json({ Message: "Success", status: 201 });
+    return ResponseEntity.createSuccessResponseEntity({
+      res : "item"
+    })
   } catch (error) {
     console.log("Error occured ", error);
-    return NextResponse.json({ Message: "Failed", status: 500 });
+    return ResponseEntity.serverErrorResponseEntity({})
   }
 }
