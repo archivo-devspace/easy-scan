@@ -3,3 +3,10 @@ export interface ReqItem {
     itemDesc: string;
     itemCoverImg: File | null;
   }
+
+export interface ResItem {
+  id: string,
+  itemTitle: string;
+  itemDesc: string;
+  itemCoverImg: string;
+}

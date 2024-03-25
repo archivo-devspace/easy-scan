@@ -69,30 +69,54 @@ const deleteSuccessResponseEntity = (
 };
 
 const notFoundResponseEntity = ({
+  error,
   statusCode = HttpStatus.NOT_FOUND,
   message = "Resource not found.",
+}: {
+  error: any;
+  statusCode?: number;
+  message?: string;
 }) => {
+  console.log("Error : ", error);
   return NextResponse.json({ message, statusCode }, { status: statusCode });
 };
 
 const conflictErrorResponseEntity = ({
+  error,
   statusCode = HttpStatus.CONFLICT,
   message = "Data is conflict.",
+}: {
+  error: any;
+  statusCode?: number;
+  message?: string;
 }) => {
+  console.log("Error : ", error);
   return NextResponse.json({ message, statusCode }, { status: statusCode });
 };
 
 const serverErrorResponseEntity = ({
+  error,
   statusCode = HttpStatus.SERVER_ERROR,
   message = "Server error.",
+}: {
+  error: any;
+  statusCode?: number;
+  message?: string;
 }) => {
+  console.log("Error : ", error);
   return NextResponse.json({ message, statusCode }, { status: statusCode });
 };
 
 const badRequestResponseEntity = ({
+  error,
   statusCode = HttpStatus.BAD_REQUEST,
   message = "Bad request.",
+}: {
+  error: any;
+  statusCode?: number;
+  message?: string;
 }) => {
+  console.log("Error : ", error);
   return NextResponse.json({ message, statusCode }, { status: statusCode });
 };
 

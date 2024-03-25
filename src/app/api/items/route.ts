@@ -1,7 +1,7 @@
 import { ResponseEntity } from "@/utils/api";
-import { getUniqueFileName } from "@/utils/file";
+import DataUtils from "@/utils/data";
+import FileUtils from "@/utils/file";
 import fs from "fs";
-import { writeFile } from "fs/promises";
 import path from "path";
 
 export async function POST(req: Request) {
@@ -14,61 +14,53 @@ export async function POST(req: Request) {
 
   const file: any = formData.get("itemCoverImg");
   if (!file) {
-    return ResponseEntity.badRequestResponseEntity({message : "No files received."})
+    return ResponseEntity.badRequestResponseEntity({
+      error: "No files",
+      message: "No files received.",
+    });
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const filename = getUniqueFileName(file.name.replaceAll(" ", "_"));
+  const filename = FileUtils.getUniqueFileName(file.name.replaceAll(" ", "_"));
 
   try {
-    await writeFile(
+    await fs.promises.writeFile(
       path.join(process.cwd(), "storage/uploads/" + filename),
       buffer
     );
     payload.itemCoverImg = filename;
 
-    // Read existing JSON data from file
-    fs.readFile("data/item.json", "utf8", (err, data) => {
-      if (err) {
-        console.error("Error reading file:", err);
-        return;
-      }
+    const data = await fs.promises.readFile("data/item.json", "utf8");
 
-      let existingData: any[] = [];
+    let existingData: any[] = [];
 
-      try {
-        existingData = data ? JSON.parse(data) : [];
-      } catch (parseError) {
-        console.error("Error parsing JSON data:", parseError);
-        return;
-      }
+    try {
+      existingData = data ? JSON.parse(data) : [];
+    } catch (parseError) {
+      throw parseError;
+    }
 
-      if (!Array.isArray(existingData)) {
-        console.error("Existing data is not an array");
-        return;
-      }
+    if (!Array.isArray(existingData)) {
+      throw new Error("Existing data is not an array");
+    }
 
-      // Append new data to the existing array
-      existingData.push(payload);
+    // Append new data to the existing array
+    const newItem = {
+      id: DataUtils.getUniqueId(),
+      ...payload,
+    };
+    existingData.push(newItem);
 
-      // Convert updated JavaScript object back to JSON string
-      const updatedJsonString = JSON.stringify(existingData, null, 2); // Using null and 2 for pretty formatting
+    // Convert updated JavaScript object back to JSON string
+    const updatedJsonString = JSON.stringify(existingData, null, 2); // Using null and 2 for pretty formatting
 
-      // Write updated JSON string back to the file
-      fs.writeFile("data/item.json", updatedJsonString, (writeErr) => {
-        if (writeErr) {
-          console.error("Error writing to file:", writeErr);
-          return;
-        }
-        console.log("New data has been appended to the file");
-      });
-    });
+    // Write updated JSON string back to the file
+    await fs.promises.writeFile("data/item.json", updatedJsonString);
 
     return ResponseEntity.createSuccessResponseEntity({
-      res : "item"
-    })
+      res: newItem,
+    });
   } catch (error) {
-    console.log("Error occured ", error);
-    return ResponseEntity.serverErrorResponseEntity({})
+    return ResponseEntity.serverErrorResponseEntity({ error });
   }
 }
