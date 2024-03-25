@@ -1,3 +1,4 @@
+import { ResItem } from "@/models/item";
 import { ResponseEntity } from "@/utils/api";
 import DataUtils from "@/utils/data";
 import FileUtils from "@/utils/file";
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
 
   try {
     await fs.promises.writeFile(
-      path.join(process.cwd(), "storage/uploads/" + filename),
+      path.join(process.cwd(), "public/storage/uploads/" + filename),
       buffer
     );
     payload.itemCoverImg = filename;
@@ -59,6 +60,24 @@ export async function POST(req: Request) {
 
     return ResponseEntity.createSuccessResponseEntity({
       res: newItem,
+    });
+  } catch (error) {
+    return ResponseEntity.serverErrorResponseEntity({ error });
+  }
+}
+
+export async function GET( request: Request) {
+  try {
+    // Read the JSON file
+    const data = await fs.promises.readFile("data/item.json", "utf8");
+
+    // Parse the JSON data
+    const items: ResItem[] = JSON.parse(data);
+
+    return ResponseEntity.getSuccessResponseEntity({
+      res: {
+        items: items,
+      },
     });
   } catch (error) {
     return ResponseEntity.serverErrorResponseEntity({ error });

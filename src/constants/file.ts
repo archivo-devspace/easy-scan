@@ -1,0 +1,1 @@
+export const FILE_RESOURCE_BASE_URL = `${process.env.NEXT_PUBLIC_FILE_RESOURCE_BASE_URL}/storage/uploads/`
