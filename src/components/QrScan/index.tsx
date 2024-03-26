@@ -1,17 +1,30 @@
-import React from "react";
+"use client";
+import React, { useRef } from "react";
 import Modal from "@mui/joy/Modal";
-import ModalClose from "@mui/joy/ModalClose";
 import Typography from "@mui/joy/Typography";
 import Sheet from "@mui/joy/Sheet";
-import Image from "next/image";
+import QRCode from "react-qr-code";
+import html2canvas from "html2canvas";
+import downloadjs from "downloadjs";
+import { ResItem } from "@/models/item";
+import { Box, Button } from "@mui/joy";
 
 interface Props {
   isOpen: boolean;
   close: any;
-  qrImg : string | null
+  itemDetailsUrl: string;
+  item: ResItem;
 }
 
-function QrScan({ qrImg, close, isOpen }: Props) {
+function QrScan({ close, isOpen, itemDetailsUrl, item }: Props) {
+  const divRef = useRef<any>(null);
+
+  const downloadQr = async () => {
+    const canvas = await html2canvas(divRef.current);
+    const dataURL = canvas.toDataURL("image/png");
+    downloadjs(dataURL, `${item.itemTitle}-${item.id}.png`, "image/png");
+  };
+
   return (
     <Modal
       aria-labelledby="modal-title"
@@ -23,16 +36,31 @@ function QrScan({ qrImg, close, isOpen }: Props) {
       <Sheet
         variant="outlined"
         sx={{
-          maxWidth: 500,
+          maxWidth: { xs: 300, sm: 500 },
           borderRadius: "md",
           p: 3,
           boxShadow: "lg",
         }}
       >
-        <ModalClose variant="plain" sx={{ m: 1 }} />
-        <Typography id="modal-desc" textColor="text.tertiary">
-          {qrImg && <Image src={qrImg} width={400} height={400} alt="qrImg" />}
+        <Typography
+          id="modal-desc"
+          textColor="text.tertiary"
+          sx={{ display: "flex", justifyContent: "center" }}
+          ref={divRef}
+        >
+          <QRCode value={itemDetailsUrl} />
         </Typography>
+        <Typography
+          id="modal-title"
+          textColor="inherit"
+          mt={3}
+          sx={{ textAlign: "center", wordBreak: "break-word" }}
+        >
+          {itemDetailsUrl}
+        </Typography>
+        <Box sx={{display: "flex", justifyContent: "center", marginTop: "20px"}}>
+          <Button onClick={downloadQr}>Download QR</Button>
+        </Box>
       </Sheet>
     </Modal>
   );
