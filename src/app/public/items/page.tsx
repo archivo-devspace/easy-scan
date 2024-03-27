@@ -23,7 +23,7 @@ async function Items() {
   console.log("items : ", items);
   return (
     <Grid container spacing={3} padding={2}>
-      {items.map((item) => (
+      {items?.map((item) => (
         <Grid key={item.id} xs={12} sm={12} md={3}>
           <ItemCard item={item} />
         </Grid>
