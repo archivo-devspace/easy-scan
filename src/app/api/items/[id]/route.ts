@@ -1,6 +1,7 @@
 import { ResItem } from "@/models/item";
 import { ResponseEntity } from "@/utils/api";
 import fs from "fs";
+import path from "path";
 
 export async function GET(
   request: Request,
@@ -10,7 +11,7 @@ export async function GET(
     const id = params.id;
 
     // Read the JSON file
-    const data = await fs.promises.readFile("data/item.json", "utf8");
+    const data = await fs.promises.readFile(path.join(process.cwd(), "data/item.json"), "utf8");
 
     // Parse the JSON data
     const items: ResItem[] = JSON.parse(data);

@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     );
     payload.itemCoverImg = filename;
 
-    const data = await fs.promises.readFile("data/item.json", "utf8");
+    const data = await fs.promises.readFile(path.join(process.cwd(), "data/item.json"), "utf8");
 
     let existingData: any[] = [];
 
@@ -68,7 +68,6 @@ export async function POST(req: Request) {
 
 export async function GET( request: Request) {
   try {
-    console.log("process.cwd", path.join(process.cwd(), "data/item.json"))
     // Read the JSON file
     const data = await fs.promises.readFile(path.join(process.cwd(), "data/item.json"), "utf8");
 
