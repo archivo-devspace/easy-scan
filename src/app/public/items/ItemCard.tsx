@@ -9,7 +9,7 @@ import Typography from "@mui/joy/Typography";
 import { ResItem } from "@/models/item";
 import Image from "next/image";
 import { FILE_RESOURCE_BASE_URL } from "@/constants/file";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import QrScan from "@/components/QrScan";
 import QRCode from "react-qr-code";
 import { Box, Button } from "@mui/joy";
@@ -23,9 +23,13 @@ interface Props {
 export default function ItemCard({ item }: Props) {
   const [isShowQr, setIsShowQr] = useState<boolean>(false);
   const pathname = usePathname()
-  const domain = window.location.origin;
+  const [domain, setDomain] = useState("");
   const itemDetailsUrl = `${domain}${pathname}/${item.id}`;
   const openQrModal = () => setIsShowQr(true);
+
+  useEffect(() => {
+    typeof window !== 'undefined' && setDomain(window.location.origin)
+  }, [])
 
   return (
     <>
