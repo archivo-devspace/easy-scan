@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "@/constants/api";
 import { ResItem } from "@/models/item";
-import { Grid } from "@mui/joy";
+import { Box, Grid } from "@mui/joy";
 import React from "react";
 
 const getItem = async (id: string) => {
@@ -23,7 +23,14 @@ async function Item({ params }: { params: { id: string } }) {
 
   return (
     <Grid container>
-      <Grid xs={12}>Title : {item.itemTitle}</Grid>
+      <Grid xs={12}>
+        <Box>
+        Title : {item.itemTitle}
+        </Box>
+        <Box>
+          Description : {item.itemDesc}
+        </Box>
+      </Grid>
     </Grid>
   );
 }
