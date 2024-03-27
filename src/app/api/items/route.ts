@@ -68,6 +68,7 @@ export async function POST(req: Request) {
 
 export async function GET( request: Request) {
   try {
+    console.log("process.cwd", process.cwd())
     // Read the JSON file
     const data = await fs.promises.readFile("data/item.json", "utf8");
 
